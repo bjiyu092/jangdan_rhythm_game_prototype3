@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>음표 길이 퀴즈</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Pretendard', sans-serif;
+      background: linear-gradient(135deg, #fef6ff, #eef7ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 800px;
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 2.2rem;
+      color: #444;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .note {
+      font-size: 8rem;
+      margin: 20px 0;
+    }
+
+    .question {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 30px 0;
+    }
+
+    .cell {
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+      border: 3px solid #c9d8ff;
+      background: #f4f8ff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .cell:hover {
+      transform: scale(1.05);
+      background: #dce9ff;
+    }
+
+    .selected {
+      background: #6ea8fe;
+      border-color: #3f7ce8;
+    }
+
+    button {
+      border: none;
+      background: #6a8cff;
+      color: white;
+      padding: 14px 24px;
+      font-size: 1rem;
+      border-radius: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #4d72f0;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      min-height: 32px;
+    }
+
+    .score {
+      margin-top: 12px;
+      color: #555;
+    }
+
+    @media (max-width: 600px) {
+      .note {
+        font-size: 5rem;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>음표 길이 퀴즈</h1>
+    <div class="subtitle">음표를 보고 길이만큼 칸을 선택해보세요!</div>
+
+    <div class="note" id="noteDisplay">♩</div>
+
+    <div class="question">
+      이 음표는 몇 칸 길이일까요?
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <button onclick="checkAnswer()">정답 확인</button>
+    <button onclick="nextQuestion()">다음 문제</button>
+
+    <div class="result" id="result"></div>
+    <div class="score" id="score">점수: 0</div>
+  </div>
+
+  <script>
+    const notes = [
+      { symbol: '𝅝', length: 4, name: '온음표' },
+      { symbol: '𝅗𝅥', length: 2, name: '2분음표' },
+      { symbol: '♩', length: 1, name: '4분음표' },
+      { symbol: '♪', length: 0.5, name: '8분음표' }
+    ];
+
+    let currentNote;
+    let selectedCount = 0;
+    let score = 0;
+
+    const grid = document.getElementById('grid');
+    const result = document.getElementById('result');
+    const scoreDisplay = document.getElementById('score');
+
+    function createGrid() {
+      grid.innerHTML = '';
+
+      for (let i = 0; i < 8; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+
+        cell.addEventListener('click', () => {
+          cell.classList.toggle('selected');
+          updateSelection();
+        });
+
+        grid.appendChild(cell);
+      }
+    }
+
+    function updateSelection() {
+      selectedCount = document.querySelectorAll('.selected').length;
+    }
+
+    function nextQuestion() {
+      result.textContent = '';
+      createGrid();
+
+      currentNote = notes[Math.floor(Math.random() * notes.length)];
+
+      document.getElementById('noteDisplay').textContent = currentNote.symbol;
+    }
+
+    function checkAnswer() {
+      if (selectedCount === currentNote.length) {
+        result.textContent = '정답! 박자가 아주 정확해요!';
+        result.style.color = '#2e9b4f';
+        score++;
+      } else {
+        result.textContent = `아쉬워요! ${currentNote.name}는 ${currentNote.length}칸 길이예요.`;
+        result.style.color = '#d64545';
+      }
+
+      scoreDisplay.textContent = `점수: ${score}`;
+    }
+
+    createGrid();
+    nextQuestion();
+  </script>
+</body>
+</html>
